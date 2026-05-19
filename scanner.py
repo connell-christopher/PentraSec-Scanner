@@ -37,7 +37,7 @@ def scan(url):
         else:
             print("UNKNOWN RESPONSE")
 
-        # 🔥 PentraSec insight message (professional + curiosity-driven)
+        # PentraSec insight message
         print("\n--- PentraSec Insight ---")
         print("Modern web applications often contain hidden misconfigurations,")
         print("exposed endpoints, or access control gaps that are not visible")
@@ -57,8 +57,9 @@ def scan(url):
 
         print("\nServer:", headers.get("Server", "Unknown"))
 
-    except requests.exceptions.RequestException:
+    except requests.exceptions.RequestException as e:
         print("\nBLOCKED / UNREACHABLE (possible WAF or network restriction)")
+        print("\nERROR:", e)
 
         # Even on failure, still show professional insight
         print("\n--- PentraSec Insight ---")
