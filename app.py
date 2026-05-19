@@ -43,14 +43,15 @@ def scan_site(url):
             "url": url,
             "error": str(e)
         }
-
 @app.route("/", methods=["GET", "POST"])
 def index():
     result = None
 
     if request.method == "POST":
-        url = request.form["url"]
-        result = scan_site(url)
+        url = request.form.get("url", "").strip()
+
+        if url:
+            result = scan_site(url)
 
     return render_template("index.html", result=result)
 
