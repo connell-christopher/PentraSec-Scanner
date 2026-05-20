@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request
-from scanner import scan_site
+from scanner import scan
 
 app = Flask(__name__)
 
@@ -8,11 +8,14 @@ def index():
     result = None
 
     if request.method == "POST":
-        url = request.form.get("url")
+        url = request.form.get("url", "").strip()
         if url:
-            result = scan_site(url)
+            result = scan(url)
 
     return render_template("index.html", result=result)
 
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    import os
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
