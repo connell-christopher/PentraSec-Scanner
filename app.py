@@ -18,7 +18,20 @@ HTML = """
 </form>
 
 {% if result %}
-<pre>{{ result }}</pre>
+    {% if result.error %}
+        <p style="color:red">{{ result.error }}</p>
+    {% else %}
+        <p><b>URL:</b> {{ result.url }}</p>
+        <p><b>Status:</b> {{ result.status }} - {{ result.status_msg }}</p>
+        <p><b>Server:</b> {{ result.server }}</p>
+
+        <h3>Missing Headers</h3>
+        <ul>
+        {% for h in result.missing_headers %}
+            <li>{{ h }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
 {% endif %}
 
 </body>
