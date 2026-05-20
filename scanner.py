@@ -4,14 +4,9 @@ def scan(url):
     if not url.startswith("http"):
         url = "https://" + url
 
-    headers = {
-        "User-Agent": "Mozilla/5.0",
-        "Accept": "*/*"
-    }
-
     try:
-        r = requests.get(url, headers=headers, timeout=5)
-        res_headers = r.headers
+        r = requests.get(url, timeout=5)
+        h = r.headers
 
         security_headers = [
             "Content-Security-Policy",
@@ -19,26 +14,22 @@ def scan(url):
             "X-Frame-Options"
         ]
 
-        missing = [h for h in security_headers if h not in res_headers]
+        missing = [x for x in security_headers if x not in h]
 
-        if r.status_code == 400:
-            status_msg = "REJECTED (WAF likely)"
-        elif r.status_code in [403, 429]:
-            status_msg = "BLOCKED"
-        elif r.status_code == 200:
-            status_msg = "SUCCESS"
-        else:
-            status_msg = "UNKNOWN"
+        status_msg = (
+            "REJECTED" if r.status_code == 400 else
+            "BLOCKED" if r.status_code in [403, 429] else
+            "SUCCESS" if r.status_code == 200 else
+            "UNKNOWN"
+        )
 
         return {
             "url": url,
             "status": r.status_code,
             "status_msg": status_msg,
-            "server": res_headers.get("Server", "Unknown"),
+            "server": h.get("Server", "Unknown"),
             "missing_headers": missing
         }
 
     except Exception as e:
-        return {
-            "error": str(e)
-        }
+        return {"error": str(e)}
